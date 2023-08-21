@@ -8,6 +8,11 @@ public class MaybeResult<T> : OneOfBase<T, Problem>
     {
     }
 
+    public MaybeResult<U> Bind<U>(Func<T, MaybeResult<U>> func, Func<Problem, Problem> problemFunc) => 
+        Match<MaybeResult<U>>(func, problem => problemFunc(problem));
+
+    public MaybeResult<U> Bind<U>(Func<T, MaybeResult<U>> func) => Bind(func, x => x);
+    
     public static MaybeResult<T> Ok(T result) => new(result);
     public static MaybeResult<T> Fail(Problem problem) => new(problem);
 

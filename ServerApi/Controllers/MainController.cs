@@ -8,17 +8,20 @@ namespace ServerApi.Controllers;
 public class MainController : ControllerBase
 {
     private readonly MainService _service;
-
-    public MainController(MainService service)
+    private readonly Transformer _transformer;
+    
+    public MainController(MainService service, Transformer transformer)
     {
         _service = service;
+        _transformer = transformer;
     }
 
     [HttpGet]
-    public ActionResult<MyDataObject> GetData([FromQuery]bool fail)
+    public ActionResult<MyDataObject> GetData([FromQuery]int input)
     {
-        var serviceResult = _service.GetData(fail);
-        return WrapResult(serviceResult);
+        var serviceResult = _service.GetData(input);
+        var transformed = _transformer.Transform(serviceResult);
+        return WrapResult(transformed);
     }
 
     private UnprocessableEntityObjectResult BusinessProblem(Problem problem) => new(new ProblemDetails

@@ -9,12 +9,12 @@ namespace Abstractions.Providers;
 public interface IMainClient
 {
     [Get("/api/v1/main")]
-    public Task<IApiResponse<MyDataObject>> GetData([Query]bool fail);
+    public Task<IApiResponse<MyDataObject>> GetData([Query]int input);
 }
 
 public interface IMainProvider
 {
-    public Task<MaybeResult<MyDataObject>> GetData(bool fail);
+    public Task<MaybeResult<MyDataObject>> GetData(int input);
 }
 
 public class MainProvider : IMainProvider
@@ -39,11 +39,12 @@ public class MainProvider : IMainProvider
         {
             var problemBody = response.Error.Content ??
                               throw new InvalidDataException("Response body does not contain problem details");
-            return JsonSerializer.Deserialize<Problem>(problemBody) ?? throw new InvalidDataException("Response body is not problem details body");
+            var opts = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+            return JsonSerializer.Deserialize<Problem>(problemBody, opts) ?? throw new InvalidDataException("Response body is not problem details body");
         }
 
         throw response.Error;
     }
 
-    public Task<MaybeResult<MyDataObject>> GetData(bool fail) => ProcessResponse(() => _client.GetData(fail));
+    public Task<MaybeResult<MyDataObject>> GetData(int input) => ProcessResponse(() => _client.GetData(input));
 }

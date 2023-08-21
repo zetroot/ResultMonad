@@ -18,19 +18,28 @@ public class AppTests
         _mainProvider = new MainProvider(client);
     }
 
-    [Test]
-    public async Task Sut_WhenNoFailure_ReturnsData()
+    [Test] 
+    public async Task Sut_WhenNegative_ReturnsProblem()
     {
-        var result = await _mainProvider.GetData(false);
-        result.IsT0.Should().BeTrue();
-        result.AsT0.Data.Should().Be(42);
+        var result = await _mainProvider.GetData(-1);
+        result.IsT1.Should().BeTrue();
+        result.AsT1.Title.Should().Be("No negatives allowed");
     }
+
+    [Test] 
+    public async Task Sut_WhenLittle_ReturnsProblem()
+    {
+        var result = await _mainProvider.GetData(34);
+        result.IsT1.Should().BeTrue();
+        result.AsT1.Title.Should().Be("Too little");
+    }
+
     
     [Test]
-    public async Task Sut_WhenFailureRequested_ReturnsProblemDetails()
+    public async Task Sut_WhenGreat_ReturnsResult()
     {
-        var result = await _mainProvider.GetData(true);
-        result.IsT1.Should().BeTrue();
-        result.AsT1.Should().NotBeNull();
+        var result = await _mainProvider.GetData(42);
+        result.IsT0.Should().BeTrue();
+        result.AsT0.Data.Should().Be(84);
     }
 }

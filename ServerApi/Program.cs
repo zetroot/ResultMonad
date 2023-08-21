@@ -3,6 +3,7 @@ using ServerApi.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddTransient<MainService>();
+builder.Services.AddTransient<Transformer>();
 builder.Services.AddControllers();
 
 var app = builder.Build();
